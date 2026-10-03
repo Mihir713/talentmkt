@@ -1,0 +1,70 @@
+-- Shared fixture, included by each test file inside its transaction (everything rolls back).
+-- A tiny world: one university, 30 students who all qualify for one cohort, two traders, an
+-- admin, an approved cohort and one open market. Names are pgTAP-specific so the fixture never
+-- collides with seeded data. Sets psql variables: s1 s2 s3 t1 t2 admin cohort_id market_id.
+
+set client_min_messages = warning;
+create extension if not exists pgtap with schema extensions;
+-- Functions postgres creates are not executable by PUBLIC (see the foundation migration), which
+-- includes pgTAP's. Let the impersonated roles call the assertion functions in these tests.
+do $$
+declare
+  f regprocedure;
+begin
+  for f in select p.oid::regprocedure from pg_proc p
+             join pg_depend d on d.objid = p.oid and d.deptype = 'e'
+             join pg_extension e on e.oid = d.refobjid and e.extname = 'pgtap' loop
+    execute format('grant execute on function %s to anon, authenticated', f);
+  end loop;
+end
+$$;
+
+insert into public.universities (name, short_name, email_domain, region)
+values ('pgTAP University', 'PGTAP', 'pgtap.test', 'ON');
+insert into public.programs (university_id, name, faculty)
+select id, 'Test Engineering', 'Engineering' from public.universities where short_name = 'PGTAP';
+insert into public.courses (university_id, code, title, level)
+select u.id, 'TST ' || g, 'Test course ' || g, 2 from public.universities u, generate_series(201, 203) g
+ where u.short_name = 'PGTAP';
+insert into public.course_skill_tags (course_id, skill_tag_id, weight)
+select c.id, st.id, 1
+  from public.courses c join public.universities u on u.id = c.university_id and u.short_name = 'PGTAP',
+       public.skill_tags st
+ where st.slug = 'quantum';
+
+create temp table w_users (n int primary key, id uuid not null, email text not null);
+insert into w_users
+select g, gen_random_uuid(),
+       case when g <= 30 then 's' || g || '@pgtap.test'
+            when g <= 32 then 't' || g || '@example.org'
+            else 'admin' || g || '@example.org' end
+  from generate_series(1, 33) g;
+
+insert into auth.users (instance_id, id, aud, role, email, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+select '00000000-0000-0000-0000-000000000000', id, 'authenticated', 'authenticated', email, now(), '{}', '{}', now(), now()
+  from w_users;
+update public.profiles set role = 'admin' where user_id = (select id from w_users where n = 33);
+
+insert into public.student_profiles (user_id, university_id, program_id, grad_year, verified_email_at, consent_at)
+select w.id, u.id, p.id, 2027, now(), now()
+  from w_users w, public.universities u join public.programs p on p.university_id = u.id
+ where u.short_name = 'PGTAP' and w.n <= 30;
+insert into public.transcript_courses (user_id, course_id, term, grade_band)
+select w.id, c.id, 'Fall 2025', 'A'
+  from w_users w, public.courses c join public.universities u on u.id = c.university_id
+ where u.short_name = 'PGTAP' and w.n <= 30;
+
+select set_config('request.jwt.claims', '', true);
+select public.propose_cohort('pgtap-quantum', 'pgTAP quantum cohort',
+  '{"skills": [{"tag": "quantum", "min_weighted_courses": 3}], "universities": ["PGTAP"]}') as cohort_id \gset
+select public.admin_review_cohort(:cohort_id, true);
+select public.propose_market(:cohort_id, 'employed_in_region',
+  '{"threshold_pct": 50, "region": "toronto", "deadline": "2029-09-01"}', 'pgTAP market') as proposal_id \gset
+select (public.admin_review_market_proposal(:proposal_id, true) ->> 'market_id')::bigint as market_id \gset
+
+select id as s1 from w_users where n = 1 \gset
+select id as s2 from w_users where n = 2 \gset
+select id as s3 from w_users where n = 3 \gset
+select id as t1 from w_users where n = 31 \gset
+select id as t2 from w_users where n = 32 \gset
+select id as admin from w_users where n = 33 \gset

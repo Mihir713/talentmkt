@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Env files: only the example is committed. Service-role and Anthropic keys live in
+# Supabase Edge Function secrets, never in the repo or in VITE_* vars.
+.env*
+!.env.example
+
+# Test output
+playwright-report/
+test-results/
+coverage/
+
+# Per-user Claude Code settings
+.claude/settings.local.json
+
+# Screenshot review rounds (regenerated on demand)
+.impeccable/review/

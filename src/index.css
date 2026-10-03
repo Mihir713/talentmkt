@@ -1,0 +1,280 @@
+@import "tailwindcss";
+@import "@fontsource-variable/archivo/standard.css";
+
+/*
+ * talentmkt design tokens.
+ * World: a newspaper data desk with Linear-grade precision. Cool paper and ink neutrals, one
+ * cobalt accent that is also the YES colour, and a vermillion NO. Blue/orange is the
+ * colourblind-safe pair; YES/NO always carry a label or icon too.
+ * Light and dark are each designed (dark raises surfaces, softens rules, lightens data colours),
+ * and both follow the system preference with no script, so there is no flash on load.
+ */
+:root {
+  color-scheme: light;
+
+  --bg: oklch(0.982 0.004 250);
+  --surface: oklch(0.996 0.002 250);
+  --surface-2: oklch(0.958 0.006 250);
+  --surface-3: oklch(0.93 0.008 250);
+  --line: oklch(0.9 0.008 250);
+  --line-strong: oklch(0.8 0.012 250);
+
+  --ink: oklch(0.22 0.02 258);
+  --ink-2: oklch(0.42 0.02 258);
+  --ink-3: oklch(0.52 0.016 258);
+
+  --yes: oklch(0.5 0.16 258);
+  --yes-strong: oklch(0.44 0.17 258);
+  --yes-soft: oklch(0.95 0.028 258);
+  --yes-line: oklch(0.82 0.07 258);
+  --on-yes: oklch(0.99 0.004 258);
+
+  --no: oklch(0.54 0.17 42);
+  --no-strong: oklch(0.48 0.17 40);
+  --no-soft: oklch(0.955 0.03 45);
+  --no-line: oklch(0.84 0.07 45);
+  --on-no: oklch(0.99 0.004 45);
+
+  --danger: oklch(0.5 0.19 24);
+  --danger-soft: oklch(0.955 0.025 24);
+  --caution: oklch(0.52 0.12 75);
+  --caution-soft: oklch(0.96 0.04 85);
+
+  --focus: oklch(0.55 0.18 258);
+  --selection: oklch(0.9 0.06 258);
+
+  --shadow-color: 258 30% 20%;
+  --shadow-popover: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 10px 28px -8px hsl(var(--shadow-color) / 0.2);
+  --shadow-sheet: 0 -8px 32px -12px hsl(var(--shadow-color) / 0.25);
+  --shadow-raised: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 2px 6px -2px hsl(var(--shadow-color) / 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --bg: oklch(0.172 0.012 258);
+    --surface: oklch(0.205 0.013 258);
+    --surface-2: oklch(0.238 0.014 258);
+    --surface-3: oklch(0.275 0.015 258);
+    --line: oklch(0.29 0.014 258);
+    --line-strong: oklch(0.37 0.016 258);
+
+    --ink: oklch(0.945 0.006 250);
+    --ink-2: oklch(0.78 0.012 250);
+    --ink-3: oklch(0.66 0.012 250);
+
+    --yes: oklch(0.72 0.13 255);
+    --yes-strong: oklch(0.78 0.11 255);
+    --yes-soft: oklch(0.27 0.055 258);
+    --yes-line: oklch(0.45 0.09 258);
+    --on-yes: oklch(0.18 0.03 258);
+
+    --no: oklch(0.74 0.14 48);
+    --no-strong: oklch(0.8 0.12 50);
+    --no-soft: oklch(0.28 0.05 42);
+    --no-line: oklch(0.47 0.09 44);
+    --on-no: oklch(0.2 0.03 42);
+
+    --danger: oklch(0.72 0.15 24);
+    --danger-soft: oklch(0.27 0.05 24);
+    --caution: oklch(0.8 0.11 80);
+    --caution-soft: oklch(0.28 0.045 80);
+
+    --focus: oklch(0.74 0.13 255);
+    --selection: oklch(0.38 0.08 258);
+
+    --shadow-color: 258 40% 2%;
+    --shadow-popover: 0 0 0 1px oklch(0.34 0.015 258), 0 12px 32px -8px hsl(var(--shadow-color) / 0.7);
+    --shadow-sheet: 0 0 0 1px oklch(0.32 0.015 258), 0 -12px 40px -12px hsl(var(--shadow-color) / 0.8);
+    --shadow-raised: 0 0 0 1px oklch(0.3 0.014 258);
+  }
+}
+
+@theme {
+  --font-sans: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Operate surfaces use a fixed rem scale (ratio ~1.2). Display sizes are for figures and the landing page. */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.05rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.2rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.35rem;
+  --text-md: 1rem;
+  --text-md--line-height: 1.55rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.6rem;
+  --text-xl: 1.3125rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.625rem;
+  --text-2xl--line-height: 2.05rem;
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 2.4rem;
+  --text-4xl: 2.75rem;
+  --text-4xl--line-height: 1.1;
+  --text-5xl: 3.5rem;
+  --text-5xl--line-height: 1.08;
+  --text-6xl: 4.5rem;
+  --text-6xl--line-height: 1.04;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Semantic colours as Tailwind utilities: bg-surface, text-ink-2, border-line, bg-yes-soft … */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-yes: var(--yes);
+  --color-yes-strong: var(--yes-strong);
+  --color-yes-soft: var(--yes-soft);
+  --color-yes-line: var(--yes-line);
+  --color-on-yes: var(--on-yes);
+  --color-no: var(--no);
+  --color-no-strong: var(--no-strong);
+  --color-no-soft: var(--no-soft);
+  --color-no-line: var(--no-line);
+  --color-on-no: var(--on-no);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-caution: var(--caution);
+  --color-caution-soft: var(--caution-soft);
+  --color-focus: var(--focus);
+  --shadow-popover: var(--shadow-popover);
+  --shadow-sheet: var(--shadow-sheet);
+  --shadow-raised: var(--shadow-raised);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    /* Every figure in the product lines up in columns and never shifts while it updates. */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  body {
+    min-height: 100dvh;
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  a {
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 1px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  input,
+  textarea {
+    caret-color: var(--focus);
+  }
+}
+
+/* Brief change tint on a figure that moved: at most 600ms, ease-out, off under reduced motion. */
+@keyframes tint-up {
+  from {
+    background-color: var(--yes-soft);
+  }
+}
+@keyframes tint-down {
+  from {
+    background-color: var(--no-soft);
+  }
+}
+@utility tint-up {
+  animation: tint-up 600ms var(--ease-out);
+  border-radius: var(--radius-sm);
+}
+@utility tint-down {
+  animation: tint-down 600ms var(--ease-out);
+  border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+@utility skeleton {
+  background: var(--surface-3);
+  border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Onboarding reveal: the one authored moment in the flow. Bars grow once, ease-out, staggered. */
+@keyframes reveal-bar {
+  from {
+    transform: scaleX(0.04);
+  }
+}
+.reveal-bar {
+  transform-origin: left;
+  animation: reveal-bar 520ms var(--ease-out) both;
+}
